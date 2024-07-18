@@ -1,5 +1,6 @@
 {
-  "HomePage": {
-    "title": "Hello world!"
+  "common": {
+    "title": "Saras Blogs",
+    "description": "These are simplistic blogs."
   }
 }
