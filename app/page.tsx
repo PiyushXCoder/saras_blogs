@@ -1,8 +1,12 @@
 import { useTranslations } from "next-intl";
+import { Posts } from "./posts";
 
 export default function Home() {
-  const t = useTranslations("HomePage");
-  const data = [];
-  for (let i = 0; i < 100; i++) data.push(<div key={i}>Hello</div>);
-  return <main>{data}</main>;
+  return (
+    <main className="w-full flex flex-col items-center">
+      <div className="max-w-[50rem] w-full">
+        <Posts />
+      </div>
+    </main>
+  );
 }
