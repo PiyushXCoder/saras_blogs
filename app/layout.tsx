@@ -37,7 +37,7 @@ export default async function RootLayout({
         >
           <NextIntlClientProvider messages={messages}>
             <NavBar banner={t("title")}>
-              <Button>Sign In</Button>
+              <Button>{t("sign_in")}</Button>
             </NavBar>
             {children}
           </NextIntlClientProvider>
