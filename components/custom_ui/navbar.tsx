@@ -11,7 +11,7 @@ const NavBar = ({
   const [isVisible, setVisible] = useState(false);
 
   return (
-    <nav className="sticky w-full h-fit p-2 top-0 backdrop-blur-sm flex flex-row">
+    <nav className="sticky w-full h-fit p-2 top-0 backdrop-blur-sm flex flex-row z-50">
       {/* Banner */}
       <div className="flex-none px-5 flex flex-row items-center font-bold text-lg">
         {banner}
