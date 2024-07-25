@@ -2,6 +2,7 @@
   "common": {
     "title": "Saras Blogs",
     "description": "These are simplistic blogs",
-    "sign_in": "Sign In"
+    "sign_in": "Sign In",
+    "sign_out": "Sign Out"
   }
 }

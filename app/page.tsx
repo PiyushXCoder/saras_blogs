@@ -1,5 +1,5 @@
 // import { useTranslations } from "next-intl";
-import { Posts } from "./posts";
+import { Posts } from "@/components/custom_ui/posts";
 
 export default function Home() {
   return (
