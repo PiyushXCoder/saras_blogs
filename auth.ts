@@ -4,7 +4,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [GitHub],
   callbacks: {
     async signIn({ user }) {
-      if (process.env.LOGIN_EMAIL == user.email) return true;
+      if (
+        user.email &&
+        process.env.LOGIN_EMAIL?.split(",").includes(user.email)
+      )
+        return true;
       else return false;
     },
   },
