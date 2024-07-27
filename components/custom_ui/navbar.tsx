@@ -23,8 +23,8 @@ const NavBar = ({
       {/* Extra Buttons */}
       <div
         className={
-          "flex flex-col top-0 left-0 flex-1 justify-end gap-x-2 " +
-          "max-md:z-50 max-md:fixed max-md:w-full max-md:bg-background " +
+          "flex flex-col top-0 left-0 flex-1 justify-end gap-x-2  " +
+          " max-md:border-b-[1px] max-md:border-foreground-100 max-md:z-50 max-md:fixed max-md:w-full max-md:bg-background " +
           "md:px-3 md:flex-row md:items-center " +
           (isVisible ? "" : " max-md:hidden")
         }
