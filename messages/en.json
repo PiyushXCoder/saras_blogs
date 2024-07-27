@@ -3,6 +3,8 @@
     "title": "Saras Blogs",
     "description": "These are simplistic blogs",
     "sign_in": "Sign In",
-    "sign_out": "Sign Out"
+    "sign_out": "Sign Out",
+    "create_post": "Create Post",
+    "publish_post": "Publish Post"
   }
 }

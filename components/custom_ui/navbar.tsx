@@ -34,7 +34,7 @@ const NavBar = ({
             className="py-3 float-end bg-background text-foreground md:hidden rounded-none hover:bg-red-500 font-bold h-12 w-12"
             onClick={() => setVisible(false)}
           >
-            &#10060;
+            &#10006;
           </Button>
         </div>
         {children}

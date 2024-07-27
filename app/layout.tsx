@@ -28,6 +28,7 @@ export default async function RootLayout({
   const messages = await getMessages();
   const t = await getTranslations("common");
   const session = await auth();
+  console.log(process.env.AUTH_SECRET);
 
   return (
     <html lang="en" suppressHydrationWarning={true}>
@@ -40,6 +41,14 @@ export default async function RootLayout({
         >
           <NextIntlClientProvider messages={messages}>
             <NavBar banner={t("title")}>
+              {session && (
+                <form>
+                  <Button className="w-full max-md:rounded-none">
+                    {t("create_post")}
+                  </Button>
+                </form>
+              )}
+
               {session && (
                 <form
                   action={async () => {
