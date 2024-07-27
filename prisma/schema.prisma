@@ -9,6 +9,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Post {
+  id           String   @id @unique
+  title        String
+  summary      String
+  author       String
+  author_email String
+  is_published Boolean
+  published_at DateTime
 }
