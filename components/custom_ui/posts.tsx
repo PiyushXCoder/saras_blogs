@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -9,18 +11,19 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DateTime } from "luxon";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 interface PostData {
   title: string;
   author: string;
-  published: Date;
+  published_at: Date;
   summary: string;
   thumbnail: string | null;
 }
 
-function Post({ title, author, published, summary, thumbnail }: PostData) {
+function Post({ title, author, published_at, summary, thumbnail }: PostData) {
   const relative_published = DateTime.fromISO(
-    published.toISOString(),
+    published_at.toISOString(),
   ).toRelative();
   return (
     <Card className="mx-2 my-5">
@@ -51,51 +54,43 @@ function EndOfLoaded({ more }: { more: boolean }) {
 }
 
 function Posts() {
-  const hasMorePosts = true;
-  const posts: PostData[] = [
-    {
-      title: "Weekly News",
-      author: "Piyush",
-      published: new Date(),
-      summary: "The Summary",
-      thumbnail: null,
-    },
-    {
-      title: "Weekly News",
-      author: "Piyush",
-      published: new Date(),
-      summary: "The Summary",
-      thumbnail: null,
-    },
-    {
-      title: "Weekly News",
-      author: "Piyush",
-      published: new Date(),
-      summary: "The Summary",
-      thumbnail: null,
-    },
-    {
-      title: "Weekly News",
-      author: "Piyush",
-      published: new Date(),
-      summary: "The Summary",
-      thumbnail: null,
-    },
-  ];
-  const posts_elements: React.ReactNode[] = [];
+  const pageLength = 20;
+  const [skip, setSkip] = useState(0);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
+  const [posts, setPosts] = useState<
+    { title: string; author: string; published_at: Date; summary: string }[]
+  >([]);
+  const [postsElements, setPostsElements] = useState<React.ReactNode[]>();
 
-  posts.forEach((post, i) => {
-    posts_elements.push(
-      <Post
-        key={i}
-        title={post.title}
-        author={post.author}
-        published={post.published}
-        summary={post.summary}
-        thumbnail={post.thumbnail}
-      />,
-    );
-  });
+  useEffect(() => {
+    fetch("/api/data/post?skip=" + skip + "&page_length=" + pageLength)
+      .then((res) => res.json())
+      .then((data) => {
+        setPosts(data);
+        setSkip(skip + pageLength);
+        if (data.length < pageLength) setHasMorePosts(false);
+      });
+  }, [setPosts]);
+
+  useEffect(() => {
+    let elements: React.ReactNode[] = [];
+    posts.forEach((post, i) => {
+      elements.push(
+        <Post
+          key={i}
+          title={post.title}
+          author={post.author}
+          published_at={post.published_at}
+          summary={post.summary}
+          thumbnail={null}
+        />,
+      );
+    });
+    setPostsElements(elements);
+  }, [posts]);
+
+  // TODO: Scroll event to load more
+  // TODO: Search box
 
   return (
     <div className="w-full">
@@ -105,7 +100,7 @@ function Posts() {
         placeholder="&#x1f50e;  Search"
       />
 
-      {posts_elements}
+      {postsElements}
 
       <EndOfLoaded more={hasMorePosts} />
     </div>

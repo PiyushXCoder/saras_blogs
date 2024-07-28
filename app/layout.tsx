@@ -28,7 +28,6 @@ export default async function RootLayout({
   const messages = await getMessages();
   const t = await getTranslations("common");
   const session = await auth();
-  console.log(process.env.AUTH_SECRET);
 
   return (
     <html lang="en" suppressHydrationWarning={true}>
