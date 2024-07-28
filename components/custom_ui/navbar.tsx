@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ThemeSwitcher } from "./theme_switcher";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 const NavBar = ({
   children,
@@ -13,9 +14,12 @@ const NavBar = ({
   return (
     <nav className="sticky w-full h-fit p-2 top-0 backdrop-blur-sm flex flex-row z-50">
       {/* Banner */}
-      <div className="flex-none px-5 flex flex-row items-center font-bold text-lg">
+      <Link
+        className="flex-none px-5 flex flex-row items-center font-bold text-lg"
+        href="/"
+      >
         {banner}
-      </div>
+      </Link>
 
       {/* Menu */}
       <div className="flex-1" />

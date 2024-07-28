@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import sun from "./imgs/sun.svg";
@@ -15,6 +15,15 @@ const ThemeSwitcher = React.forwardRef(() => {
       setTheme("light");
     }
   };
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute(
+        "data-color-mode",
+        theme || "light",
+      );
+    }
+  }, [theme]);
 
   return (
     <Button onClick={changeTheme} className="px-2">
