@@ -10,11 +10,11 @@ export async function GET(request: Request) {
   const search = searchParams.get("search");
   const skip = Number.parseInt(searchParams.get("skip") || "0");
   const pageLength = Number.parseInt(searchParams.get("page_length") || "20");
-  let is_published = false;
+  let is_published = true;
 
   const session = await auth();
   if (session) {
-    is_published = true;
+    is_published = false;
   }
 
   const prisma = new PrismaClient();
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
         },
         OR: [
           {
-            is_published: false,
+            is_published: true,
           },
           {
             is_published,
@@ -97,7 +97,7 @@ export async function POST(request: Request) {
       author: session?.user?.name || "",
       author_email: session?.user?.email || "",
       is_published: false,
-      published_at: Date(),
+      published_at: new Date(),
     },
   });
 

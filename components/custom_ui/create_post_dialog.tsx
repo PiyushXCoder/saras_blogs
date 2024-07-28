@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Dialog,
@@ -18,6 +20,16 @@ const CreatePostDialog = React.forwardRef<
   HTMLButtonElement,
   DialogTriggerProps
 >(({ children }, _) => {
+  const createPost = (formData: FormData) => {
+    console.log("In here", formData);
+
+    fetch("/api/data/post?" + new URLSearchParams(formData as any), {
+      method: "POST",
+    })
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -26,29 +38,29 @@ const CreatePostDialog = React.forwardRef<
           <DialogTitle>Create Post</DialogTitle>
           <DialogDescription>Create a new post</DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <form className="grid gap-4 py-4" action={createPost}>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Title
             </Label>
-            <Input id="name" className="col-span-3" />
+            <Input name="title" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Slug
             </Label>
-            <Input id="name" className="col-span-3" />
+            <Input name="id" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Summary
             </Label>
-            <Textarea id="name" className="col-span-3" />
+            <Textarea name="summary" className="col-span-3" />
           </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit">Create</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="submit">Create</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

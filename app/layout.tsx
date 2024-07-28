@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getLocale, getMessages } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import "./globals.css";
 import { NavBar } from "@/components/custom_ui/navbar";
@@ -11,6 +11,7 @@ import { signIn, signOut, auth } from "@/auth";
 import Image from "next/image";
 import { CreatePostDialog } from "@/components/custom_ui/create_post_dialog";
 import { Label } from "@radix-ui/react-label";
+import { LogoutButton } from "@/components/custom_ui/logout_button";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,12 +28,13 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   // Providing all messages to the client
   // side is the easiest way to get started
+  const locale = await getLocale();
   const messages = await getMessages();
   const t = await getTranslations("common");
   const session = await auth();
 
   return (
-    <html lang="en" suppressHydrationWarning={true}>
+    <html suppressHydrationWarning={true} lang={locale}>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
@@ -52,18 +54,7 @@ export default async function RootLayout({
                 </form>
               )}
 
-              {session && (
-                <form
-                  action={async () => {
-                    "use server";
-                    await signOut();
-                  }}
-                >
-                  <Button className="w-full max-md:rounded-none">
-                    {t("sign_out")}
-                  </Button>
-                </form>
-              )}
+              {session && <LogoutButton />}
 
               {session && (
                 <div className="flex row items-center">

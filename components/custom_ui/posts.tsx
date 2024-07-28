@@ -1,5 +1,6 @@
 "use client";
 
+import { auth } from "@/auth";
 import {
   Card,
   CardContent,
@@ -16,15 +17,13 @@ import { useEffect, useState } from "react";
 interface PostData {
   title: string;
   author: string;
-  published_at: Date;
+  published_at: string;
   summary: string;
   thumbnail: string | null;
 }
 
 function Post({ title, author, published_at, summary, thumbnail }: PostData) {
-  const relative_published = DateTime.fromISO(
-    published_at.toISOString(),
-  ).toRelative();
+  const relative_published = DateTime.fromISO(published_at).toRelative();
   return (
     <Card className="mx-2 my-5">
       <CardHeader>
@@ -58,7 +57,7 @@ function Posts() {
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const [posts, setPosts] = useState<
-    { title: string; author: string; published_at: Date; summary: string }[]
+    { title: string; author: string; published_at: string; summary: string }[]
   >([]);
   const [postsElements, setPostsElements] = useState<React.ReactNode[]>();
 
