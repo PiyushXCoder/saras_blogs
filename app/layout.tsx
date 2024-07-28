@@ -9,6 +9,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { signIn, signOut, auth } from "@/auth";
 import Image from "next/image";
+import { CreatePostDialog } from "@/components/custom_ui/create_post_dialog";
+import { Label } from "@radix-ui/react-label";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,9 +44,11 @@ export default async function RootLayout({
             <NavBar banner={t("title")}>
               {session && (
                 <form>
-                  <Button className="w-full max-md:rounded-none">
-                    {t("create_post")}
-                  </Button>
+                  <CreatePostDialog>
+                    <Button className="w-full max-md:rounded-none">
+                      {t("create_post")}
+                    </Button>
+                  </CreatePostDialog>
                 </form>
               )}
 
@@ -62,13 +66,16 @@ export default async function RootLayout({
               )}
 
               {session && (
-                <Image
-                  src={session?.user?.image || ""}
-                  alt=""
-                  width="40"
-                  height="40"
-                  className="rounded-xl max-md:m-3"
-                />
+                <div className="flex row items-center">
+                  <Image
+                    src={session?.user?.image || ""}
+                    alt=""
+                    width="40"
+                    height="40"
+                    className="rounded-xl max-md:m-3"
+                  />
+                  <Label className="md:hidden">{session.user?.name}</Label>
+                </div>
               )}
 
               {!session && (
