@@ -15,6 +15,7 @@
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@uiw/react-markdown-editor": "^6.1.2",
+    "@uiw/react-markdown-preview": "^5.1.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.408.0",
@@ -25,7 +26,6 @@
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
-    "showdown": "^2.1.0",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7"
   },

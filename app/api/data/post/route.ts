@@ -26,11 +26,16 @@ export async function GET(request: Request) {
       },
     });
 
+    if (!data)
+      return NextResponse.json({ error: "Not Found" }, { status: 404 });
+
     if (!process.env.POSTS_DIR)
       return NextResponse.json({ error: "Internal" }, { status: 500 });
 
     return NextResponse.json({
-      data: readFileSync(process.env.POSTS_DIR),
+      data: readFileSync(
+        path.join(process.env.POSTS_DIR, id + ".mdx"),
+      ).toString(),
       ...data,
     });
   } else {
