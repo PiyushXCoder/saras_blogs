@@ -12,30 +12,34 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DateTime } from "luxon";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface PostData {
+  id: string;
   title: string;
   author: string;
   published_at: string;
   summary: string;
-  thumbnail: string | null;
 }
 
-function Post({ title, author, published_at, summary, thumbnail }: PostData) {
+function Post({
+  post: { id, title, author, published_at, summary },
+}: {
+  post: PostData;
+}) {
   const relative_published = DateTime.fromISO(published_at).toRelative();
   return (
     <Card className="mx-2 my-5">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>
+          <Link href={"/" + id}>{title}</Link>
+        </CardTitle>
         <CardDescription>
           {"@" + author + " — " + relative_published}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        {thumbnail !== null && <Image alt={thumbnail} src={thumbnail} />}
-        {summary}
-      </CardContent>
+      <CardContent>{summary}</CardContent>
     </Card>
   );
 }
@@ -56,9 +60,7 @@ function Posts() {
   const pageLength = 20;
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState(true);
-  const [posts, setPosts] = useState<
-    { title: string; author: string; published_at: string; summary: string }[]
-  >([]);
+  const [posts, setPosts] = useState<PostData[]>([]);
   const [postsElements, setPostsElements] = useState<React.ReactNode[]>();
 
   useEffect(() => {
@@ -74,16 +76,7 @@ function Posts() {
   useEffect(() => {
     let elements: React.ReactNode[] = [];
     posts.forEach((post, i) => {
-      elements.push(
-        <Post
-          key={i}
-          title={post.title}
-          author={post.author}
-          published_at={post.published_at}
-          summary={post.summary}
-          thumbnail={null}
-        />,
-      );
+      elements.push(<Post key={i} post={post} />);
     });
     setPostsElements(elements);
   }, [posts]);
