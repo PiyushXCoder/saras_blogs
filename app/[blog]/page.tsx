@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { readFileSync } from "fs";
 import path from "path";
 import PostView from "@/components/custom_ui/post_preview";
+import { auth } from "@/auth";
 
 export default async function Blog({
   params: { blog },
@@ -9,6 +10,7 @@ export default async function Blog({
   params: { blog: string };
 }) {
   const prisma = new PrismaClient();
+  const session = await auth();
 
   const post = await prisma.post.findUnique({
     where: {
@@ -16,7 +18,11 @@ export default async function Blog({
     },
   });
 
-  if (!post) return <div>Not found</div>;
+  if (
+    !post ||
+    (!post.is_published && session?.user?.email != post.author_email)
+  )
+    return <div>Not found</div>;
 
   if (!process.env.POSTS_DIR) return <div>Error</div>;
 
