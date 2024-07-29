@@ -14,6 +14,7 @@ import { DateTime } from "luxon";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { useSession } from "@/auth";
 
 interface PostData {
   id: string;
@@ -26,11 +27,10 @@ interface PostData {
 
 function Post({
   post: { id, title, author, author_email, published_at, summary },
-  userEmail,
 }: {
   post: PostData;
-  userEmail: string;
 }) {
+  const session = useSession();
   const relative_published = DateTime.fromISO(published_at).toRelative();
   return (
     <Card className="mx-2 my-5">
@@ -44,7 +44,7 @@ function Post({
       </CardHeader>
       <CardContent>{summary}</CardContent>
       <CardFooter>
-        {userEmail == author_email && (
+        {session.data?.user?.email == author_email && (
           <Link href={"/edit/" + id}>
             <Button>Edit</Button>
           </Link>
@@ -66,7 +66,7 @@ function EndOfLoaded({ more }: { more: boolean }) {
   );
 }
 
-function Posts({ userEmail }: { userEmail: string }) {
+function Posts() {
   const pageLength = 20;
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState(true);
@@ -86,7 +86,7 @@ function Posts({ userEmail }: { userEmail: string }) {
   useEffect(() => {
     let elements: React.ReactNode[] = [];
     posts.forEach((post, i) => {
-      elements.push(<Post key={i} post={post} userEmail={userEmail} />);
+      elements.push(<Post key={i} post={post} />);
     });
     setPostsElements(elements);
   }, [posts]);
