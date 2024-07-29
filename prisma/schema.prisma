@@ -16,7 +16,7 @@ datasource db {
 model Post {
   id           String   @id @unique
   title        String
-  summary      String
+  summary      String   @db.VarChar(500)
   author       String
   author_email String
   is_published Boolean

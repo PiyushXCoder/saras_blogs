@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useSession } from "@/auth";
-import { stringify } from "querystring";
+import { EditMetadataDialog } from "@/components/custom_ui/edit_metadata_dialog";
 
 const MarkdownEditor = dynamic(() => import("@uiw/react-markdown-editor"), {
   ssr: false,
@@ -85,7 +85,9 @@ export default function Home({
         <div className="flex flex-row overflow-scroll gap-2 my-4">
           <Button onClick={saveAsUnpublished}>Save as Unpublished</Button>
           <Button onClick={saveAsPublished}>Publish</Button>
-          <Button>Edit Metadata</Button>
+          <EditMetadataDialog blogId={blog}>
+            <Button>Edit Metadata</Button>
+          </EditMetadataDialog>
           <Button>Delete</Button>
         </div>
         <MarkdownEditor
