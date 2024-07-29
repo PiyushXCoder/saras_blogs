@@ -137,7 +137,7 @@ export async function PUT(request: Request) {
       where: {
         id,
       },
-    })) == 0;
+    })) != 0;
 
   if (!idExist)
     return NextResponse.json(
@@ -145,11 +145,11 @@ export async function PUT(request: Request) {
       { status: 400 },
     );
 
-  if (title) prisma.post.update({ data: { title }, where: { id } });
-  if (summary) prisma.post.update({ data: { summary }, where: { id } });
+  if (title) await prisma.post.update({ data: { title }, where: { id } });
+  if (summary) await prisma.post.update({ data: { summary }, where: { id } });
   if (is_published)
-    prisma.post.update({
-      data: { is_published: Boolean(is_published) },
+    await prisma.post.update({
+      data: { is_published: is_published === "true" },
       where: { id },
     });
 
@@ -192,7 +192,7 @@ export async function PATCH(request: Request) {
       where: {
         id,
       },
-    })) == 0;
+    })) != 0;
 
   if (!idExist)
     return NextResponse.json(

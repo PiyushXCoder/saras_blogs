@@ -21,8 +21,6 @@ const CreatePostDialog = React.forwardRef<
   DialogTriggerProps
 >(({ children }, _) => {
   const createPost = (formData: FormData) => {
-    console.log("In here", formData);
-
     fetch("/api/data/post?" + new URLSearchParams(formData as any), {
       method: "POST",
     })
