@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { readFileSync } from "fs";
-import { NextResponse } from "next/server";
 import path from "path";
 import PostView from "@/components/custom_ui/post_preview";
 
@@ -17,10 +16,9 @@ export default async function Blog({
     },
   });
 
-  if (!post) return NextResponse.json({ error: "Not Found" }, { status: 404 });
+  if (!post) return <div>Not found</div>;
 
-  if (!process.env.POSTS_DIR)
-    return NextResponse.json({ error: "Internal" }, { status: 500 });
+  if (!process.env.POSTS_DIR) return <div>Error</div>;
 
   const data = readFileSync(
     path.join(process.env.POSTS_DIR, blog + ".mdx"),

@@ -1,32 +1,35 @@
 "use client";
 
-import { auth } from "@/auth";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DateTime } from "luxon";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
 
 interface PostData {
   id: string;
   title: string;
   author: string;
+  author_email: string;
   published_at: string;
   summary: string;
 }
 
 function Post({
-  post: { id, title, author, published_at, summary },
+  post: { id, title, author, author_email, published_at, summary },
+  userEmail,
 }: {
   post: PostData;
+  userEmail: string;
 }) {
   const relative_published = DateTime.fromISO(published_at).toRelative();
   return (
@@ -40,6 +43,13 @@ function Post({
         </CardDescription>
       </CardHeader>
       <CardContent>{summary}</CardContent>
+      <CardFooter>
+        {userEmail == author_email && (
+          <Link href={"/edit/" + id}>
+            <Button>Edit</Button>
+          </Link>
+        )}
+      </CardFooter>
     </Card>
   );
 }
@@ -56,7 +66,7 @@ function EndOfLoaded({ more }: { more: boolean }) {
   );
 }
 
-function Posts() {
+function Posts({ userEmail }: { userEmail: string }) {
   const pageLength = 20;
   const [skip, setSkip] = useState(0);
   const [hasMorePosts, setHasMorePosts] = useState(true);
@@ -76,7 +86,7 @@ function Posts() {
   useEffect(() => {
     let elements: React.ReactNode[] = [];
     posts.forEach((post, i) => {
-      elements.push(<Post key={i} post={post} />);
+      elements.push(<Post key={i} post={post} userEmail={userEmail} />);
     });
     setPostsElements(elements);
   }, [posts]);
