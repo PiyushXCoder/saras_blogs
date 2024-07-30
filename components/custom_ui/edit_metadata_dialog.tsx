@@ -24,17 +24,21 @@ const EditMetadataDialog = React.forwardRef<
   HTMLButtonElement,
   DialogTriggerPropsExt
 >(({ blogId, children }, _) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
 
   useEffect(() => {
-    fetch("/api/data/post?id=" + encodeURI(blogId)).then(async (res) => {
-      if (res.status == 200) {
-        const data: { title: string; summary: string } = await res.json();
-        setTitle(data.title);
-        setSummary(data.summary);
-      }
-    });
+    fetch("/api/data/post?" + new URLSearchParams({ id: blogId })).then(
+      async (res) => {
+        if (res.status == 200) {
+          const data: { title: string; summary: string | null } =
+            await res.json();
+          setTitle(data.title);
+          setSummary(data.summary || "");
+        }
+      },
+    );
   }, [setTitle, setSummary]);
 
   const createPost = (formData: FormData) => {
@@ -43,12 +47,15 @@ const EditMetadataDialog = React.forwardRef<
     fetch("/api/data/post?" + new URLSearchParams(formData as any), {
       method: "PUT",
     })
-      .then((data) => alert(data))
-      .catch((error) => alert(error));
+      .then(async (data) => {
+        if (data.status == 200) setIsOpen(false);
+        else alert(await data.text());
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>

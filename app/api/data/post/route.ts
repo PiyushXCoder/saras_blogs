@@ -10,35 +10,38 @@ export async function GET(request: Request) {
   const search = searchParams.get("search");
   const skip = Number.parseInt(searchParams.get("skip") || "0");
   const pageLength = Number.parseInt(searchParams.get("page_length") || "20");
-  let is_published = true;
+
+  const addBody = searchParams.get("body");
 
   const session = await auth();
-  if (session) {
-    is_published = false;
-  }
-
   const prisma = new PrismaClient();
 
   if (id != null) {
-    const data = await prisma.post.findUnique({
-      where: {
-        id,
-      },
+    const post = await prisma.post.findUnique({
+      where: { id },
     });
 
-    if (!data)
+    if (!post)
       return NextResponse.json({ error: "Not Found" }, { status: 404 });
 
     if (!process.env.POSTS_DIR)
-      return NextResponse.json({ error: "Internal" }, { status: 500 });
+      return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
-    return NextResponse.json({
-      data: readFileSync(
-        path.join(process.env.POSTS_DIR, id + ".mdx"),
-      ).toString(),
-      ...data,
-    });
+    if (!post.is_published && post?.author_email != session?.user?.email)
+      return NextResponse.json({ error: "Not permited" }, { status: 403 });
+
+    if (addBody == "true") {
+      return NextResponse.json({
+        data: readFileSync(
+          path.join(process.env.POSTS_DIR, id + ".mdx"),
+        ).toString(),
+        ...post,
+      });
+    } else return NextResponse.json(post);
   } else {
+    let is_published = true;
+    if (session) is_published = false;
+
     const data = await prisma.post.findMany({
       skip,
       take: pageLength,
@@ -90,7 +93,7 @@ export async function POST(request: Request) {
     );
 
   if (!process.env.POSTS_DIR)
-    return NextResponse.json({ error: "Internal" }, { status: 500 });
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
   const session = await auth();
 
@@ -131,19 +134,19 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "id is missing" }, { status: 400 });
 
   const prisma = new PrismaClient();
+  const session = await auth();
 
-  const idExist =
-    (await prisma.post.count({
-      where: {
-        id,
-      },
-    })) != 0;
+  const post = await prisma.post.findFirst({
+    where: { id },
+  });
 
-  if (!idExist)
-    return NextResponse.json(
-      { error: "Slug(id) does not exist" },
-      { status: 400 },
-    );
+  if (!post) return NextResponse.json({ error: "Not Found" }, { status: 404 });
+
+  if (!process.env.POSTS_DIR)
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+
+  if (post?.author_email != session?.user?.email)
+    return NextResponse.json({ error: "Not permited" }, { status: 403 });
 
   if (title) await prisma.post.update({ data: { title }, where: { id } });
   if (summary) await prisma.post.update({ data: { summary }, where: { id } });
@@ -152,18 +155,6 @@ export async function PUT(request: Request) {
       data: { is_published: is_published === "true" },
       where: { id },
     });
-
-  if (!process.env.POSTS_DIR)
-    return NextResponse.json({ error: "Internal" }, { status: 500 });
-
-  const session = await auth();
-
-  const post = await prisma.post.findFirst({
-    where: { id },
-  });
-
-  if (post?.author_email != session?.user?.email)
-    return NextResponse.json({ error: "Not permited" }, { status: 403 });
 
   const content = (await request.body?.getReader().read())?.value;
 
@@ -186,28 +177,16 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "id is missing" }, { status: 400 });
 
   const prisma = new PrismaClient();
-
-  const idExist =
-    (await prisma.post.count({
-      where: {
-        id,
-      },
-    })) != 0;
-
-  if (!idExist)
-    return NextResponse.json(
-      { error: "Slug(id) does not exist" },
-      { status: 400 },
-    );
-
-  if (!process.env.POSTS_DIR)
-    return NextResponse.json({ error: "Internal" }, { status: 500 });
-
   const session = await auth();
 
   const post = await prisma.post.findFirst({
     where: { id },
   });
+
+  if (!post) return NextResponse.json({ error: "Not Found" }, { status: 400 });
+
+  if (!process.env.POSTS_DIR)
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
   if (post?.author_email != session?.user?.email)
     return NextResponse.json({ error: "Not permited" }, { status: 403 });
@@ -232,28 +211,16 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "id is missing" }, { status: 400 });
 
   const prisma = new PrismaClient();
-
-  const idExist =
-    (await prisma.post.count({
-      where: {
-        id,
-      },
-    })) != 0;
-
-  if (!idExist)
-    return NextResponse.json(
-      { error: "Slug(id) does not exist" },
-      { status: 400 },
-    );
-
-  if (!process.env.POSTS_DIR)
-    return NextResponse.json({ error: "Internal" }, { status: 500 });
-
   const session = await auth();
 
   const post = await prisma.post.findFirst({
     where: { id },
   });
+
+  if (!post) return NextResponse.json({ error: "Not Found" }, { status: 400 });
+
+  if (!process.env.POSTS_DIR)
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
   if (post?.author_email != session?.user?.email)
     return NextResponse.json({ error: "Not permited" }, { status: 403 });

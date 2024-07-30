@@ -22,7 +22,9 @@ export default function Home({
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/data/post?id=" + encodeURI(blog)).then(async (res) => {
+    fetch(
+      "/api/data/post?" + new URLSearchParams({ id: blog, body: "true" }),
+    ).then(async (res) => {
       if (res.status == 200) {
         const { data, author_email }: { data: string; author_email: string } =
           await res.json();
@@ -33,7 +35,7 @@ export default function Home({
         setMarkdown(data);
       }
     });
-  }, []);
+  }, [setIsPermited]);
 
   if (!isPermited) {
     return <div>Not Found</div>;
