@@ -19,14 +19,13 @@ import { useSession } from "@/auth";
 interface PostData {
   id: string;
   title: string;
-  author: string;
-  author_email: string;
+  author: { email: string; name: string };
   published_at: string;
   summary: string;
 }
 
 function Post({
-  post: { id, title, author, author_email, published_at, summary },
+  post: { id, title, author, published_at, summary },
 }: {
   post: PostData;
 }) {
@@ -39,12 +38,12 @@ function Post({
           <Link href={"/" + id}>{title}</Link>
         </CardTitle>
         <CardDescription>
-          {"@" + author + " — " + relative_published}
+          {author.name + " — " + relative_published}
         </CardDescription>
       </CardHeader>
       <CardContent>{summary}</CardContent>
       <CardFooter>
-        {session.data?.user?.email == author_email && (
+        {session.data?.user?.email == author.email && (
           <Link href={"/edit/" + id}>
             <Button>Edit</Button>
           </Link>

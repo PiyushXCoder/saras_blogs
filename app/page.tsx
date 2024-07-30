@@ -1,4 +1,3 @@
-// import { useTranslations } from "next-intl";
 import { Posts } from "@/components/custom_ui/posts";
 
 export default async function Home() {

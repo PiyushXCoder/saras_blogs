@@ -17,8 +17,16 @@ model Post {
   id           String   @id @unique
   title        String
   summary      String   @db.VarChar(500)
-  author       String
-  author_email String
+  author       Author   @relation(fields: [author_id], references: [id])
   is_published Boolean
   published_at DateTime
+  author_id    String
+}
+
+model Author {
+  id    String @id @unique
+  name  String
+  email String
+  image String
+  Post  Post[]
 }

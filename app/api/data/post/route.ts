@@ -19,6 +19,7 @@ export async function GET(request: Request) {
   if (id != null) {
     const post = await prisma.post.findUnique({
       where: { id },
+      include: { author: true },
     });
 
     if (!post)
@@ -27,7 +28,7 @@ export async function GET(request: Request) {
     if (!process.env.POSTS_DIR)
       return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
-    if (!post.is_published && post?.author_email != session?.user?.email)
+    if (!post.is_published && post?.author?.email != session?.user?.email)
       return NextResponse.json({ error: "Not permited" }, { status: 403 });
 
     if (addBody == "true") {
@@ -55,10 +56,11 @@ export async function GET(request: Request) {
           },
           {
             is_published,
-            author_email: session?.user?.email || "",
+            author: { email: session?.user?.email || "" },
           },
         ],
       },
+      include: { author: true },
     });
 
     return NextResponse.json(data);
@@ -96,14 +98,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
   const session = await auth();
+  console.log("=>>>>", session?.user);
+
+  await prisma.author.upsert({
+    where: {
+      id: session?.user?.id || session?.user?.email || "",
+    },
+    update: {
+      name: session?.user?.name || "",
+      email: session?.user?.email || "",
+      image: session?.user?.image || "",
+    },
+    create: {
+      id: session?.user?.id || session?.user?.email || "",
+      name: session?.user?.name || "",
+      email: session?.user?.email || "",
+      image: session?.user?.image || "",
+    },
+  });
 
   await prisma.post.create({
     data: {
       id,
       title,
       summary: summary || "",
-      author: session?.user?.name || "",
-      author_email: session?.user?.email || "",
+      author_id: session?.user?.id || session?.user?.email || "",
       is_published: false,
       published_at: new Date(),
     },
@@ -138,6 +157,7 @@ export async function PUT(request: Request) {
 
   const post = await prisma.post.findFirst({
     where: { id },
+    include: { author: true },
   });
 
   if (!post) return NextResponse.json({ error: "Not Found" }, { status: 404 });
@@ -145,7 +165,7 @@ export async function PUT(request: Request) {
   if (!process.env.POSTS_DIR)
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
-  if (post?.author_email != session?.user?.email)
+  if (post?.author?.email != session?.user?.email)
     return NextResponse.json({ error: "Not permited" }, { status: 403 });
 
   if (title) await prisma.post.update({ data: { title }, where: { id } });
@@ -181,6 +201,7 @@ export async function PATCH(request: Request) {
 
   const post = await prisma.post.findFirst({
     where: { id },
+    include: { author: true },
   });
 
   if (!post) return NextResponse.json({ error: "Not Found" }, { status: 400 });
@@ -188,7 +209,7 @@ export async function PATCH(request: Request) {
   if (!process.env.POSTS_DIR)
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
-  if (post?.author_email != session?.user?.email)
+  if (post?.author?.email != session?.user?.email)
     return NextResponse.json({ error: "Not permited" }, { status: 403 });
 
   const content = (await request.body?.getReader().read())?.value;
@@ -215,6 +236,7 @@ export async function DELETE(request: Request) {
 
   const post = await prisma.post.findFirst({
     where: { id },
+    include: { author: true },
   });
 
   if (!post) return NextResponse.json({ error: "Not Found" }, { status: 400 });
@@ -222,7 +244,7 @@ export async function DELETE(request: Request) {
   if (!process.env.POSTS_DIR)
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
-  if (post?.author_email != session?.user?.email)
+  if (post?.author?.email != session?.user?.email)
     return NextResponse.json({ error: "Not permited" }, { status: 403 });
 
   await prisma.post.delete({ where: { id } });

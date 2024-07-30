@@ -26,9 +26,9 @@ export default function Home({
       "/api/data/post?" + new URLSearchParams({ id: blog, body: "true" }),
     ).then(async (res) => {
       if (res.status == 200) {
-        const { data, author_email }: { data: string; author_email: string } =
+        const { data, author }: { data: string; author: { email: string } } =
           await res.json();
-        if (session.data?.user?.email != author_email) {
+        if (session.data?.user?.email != author.email) {
           setIsPermited(false);
           return;
         }
