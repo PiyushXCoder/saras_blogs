@@ -16,8 +16,8 @@ export default function Home({
 }: {
   params: { blog: string };
 }) {
-  const [markdown, setMarkdown] = useState<string | null>(null);
-  const [isPermited, setIsPermited] = useState(true);
+  const [markdown, setMarkdown] = useState<string>("");
+  const [isVisible, setIsVisible] = useState(true);
   const session = useSession();
   const router = useRouter();
 
@@ -29,19 +29,17 @@ export default function Home({
         const { data, author }: { data: string; author: { email: string } } =
           await res.json();
         if (session.data?.user?.email != author.email) {
-          setIsPermited(false);
+          setIsVisible(false);
           return;
         }
         setMarkdown(data);
-      }
+      } else setIsVisible(false);
     });
-  }, [setIsPermited]);
+  }, [setIsVisible]);
 
-  if (!isPermited) {
-    return <div>Not Found</div>;
+  if (!isVisible) {
+    return <div>Some issue!</div>;
   }
-
-  if (!markdown) return <div></div>;
 
   const saveAsUnpublished = () => {
     fetch(
