@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { writeFileSync, readFileSync } from "fs";
+import { writeFileSync, readFileSync, unlinkSync } from "fs";
 import path from "path";
 
 export async function GET(request: Request) {
@@ -220,6 +220,47 @@ export async function PATCH(request: Request) {
   writeFileSync(path.join(process.env.POSTS_DIR, id + ".mdx"), content, {
     flag: "w",
   });
+
+  return NextResponse.json({ msg: "ok" });
+}
+
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  if (id == null)
+    return NextResponse.json({ error: "id is missing" }, { status: 400 });
+
+  const prisma = new PrismaClient();
+
+  const idExist =
+    (await prisma.post.count({
+      where: {
+        id,
+      },
+    })) != 0;
+
+  if (!idExist)
+    return NextResponse.json(
+      { error: "Slug(id) does not exist" },
+      { status: 400 },
+    );
+
+  if (!process.env.POSTS_DIR)
+    return NextResponse.json({ error: "Internal" }, { status: 500 });
+
+  const session = await auth();
+
+  const post = await prisma.post.findFirst({
+    where: { id },
+  });
+
+  if (post?.author_email != session?.user?.email)
+    return NextResponse.json({ error: "Not permited" }, { status: 403 });
+
+  await prisma.post.delete({ where: { id } });
+
+  unlinkSync(path.join(process.env.POSTS_DIR, id + ".mdx"));
 
   return NextResponse.json({ msg: "ok" });
 }

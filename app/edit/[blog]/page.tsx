@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useSession } from "@/auth";
 import { EditMetadataDialog } from "@/components/custom_ui/edit_metadata_dialog";
+import { useRouter } from "next/navigation";
 
 const MarkdownEditor = dynamic(() => import("@uiw/react-markdown-editor"), {
   ssr: false,
@@ -18,6 +19,7 @@ export default function Home({
   const [markdown, setMarkdown] = useState<string | null>(null);
   const [isPermited, setIsPermited] = useState(true);
   const session = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     fetch("/api/data/post?id=" + encodeURI(blog)).then(async (res) => {
@@ -77,7 +79,26 @@ export default function Home({
       });
   };
 
-  const Delete = () => {};
+  const Delete = () => {
+    if (!confirm("Do you want to delete")) return;
+
+    fetch(
+      "/api/data/post?" +
+        new URLSearchParams({ id: blog, is_published: "true" }),
+      {
+        method: "DELETE",
+      },
+    )
+      .then(async (res) => {
+        if (res.status == 200) {
+          router.replace("/");
+        } else alert(await res.text());
+      })
+      .catch((err) => {
+        alert("Failed to delete");
+        console.log(err);
+      });
+  };
 
   return (
     <main className="w-full flex flex-col items-center">
@@ -88,7 +109,7 @@ export default function Home({
           <EditMetadataDialog blogId={blog}>
             <Button>Edit Metadata</Button>
           </EditMetadataDialog>
-          <Button>Delete</Button>
+          <Button onClick={Delete}>Delete</Button>
         </div>
         <MarkdownEditor
           value={markdown}

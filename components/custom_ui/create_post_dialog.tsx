@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -15,21 +15,29 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { DialogTriggerProps } from "@radix-ui/react-dialog";
 import { Textarea } from "../ui/textarea";
+import { useRouter } from "next/navigation";
 
 const CreatePostDialog = React.forwardRef<
   HTMLButtonElement,
   DialogTriggerProps
 >(({ children }, _) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
   const createPost = (formData: FormData) => {
     fetch("/api/data/post?" + new URLSearchParams(formData as any), {
       method: "POST",
     })
-      .then((data) => console.log(data))
+      .then(async (data) => {
+        if (data.status == 200) {
+          setIsOpen(false);
+          router.replace("/edit/" + formData.get("id"));
+        } else alert(await data.text());
+      })
       .catch((error) => console.log(error));
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
