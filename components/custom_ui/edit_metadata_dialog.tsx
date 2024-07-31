@@ -88,4 +88,6 @@ const EditMetadataDialog = React.forwardRef<
   );
 });
 
+EditMetadataDialog.displayName = "EditMetadataDialog";
+
 export { EditMetadataDialog };

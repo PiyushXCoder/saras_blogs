@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { readFileSync } from "fs";
-import path, { relative } from "path";
+import path from "path";
 import PostView from "@/components/custom_ui/post_preview";
 import { auth } from "@/auth";
 import Image from "next/image";

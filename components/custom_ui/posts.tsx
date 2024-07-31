@@ -80,7 +80,7 @@ function Posts() {
         setSkip(skip + pageLength);
         if (data.length < pageLength) setHasMorePosts(false);
       });
-  }, [setPosts]);
+  }, [setPosts, skip]);
 
   useEffect(() => {
     let elements: React.ReactNode[] = [];

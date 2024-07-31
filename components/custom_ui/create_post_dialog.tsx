@@ -72,4 +72,6 @@ const CreatePostDialog = React.forwardRef<
   );
 });
 
+CreatePostDialog.displayName = "CreatePostDialog";
+
 export { CreatePostDialog };

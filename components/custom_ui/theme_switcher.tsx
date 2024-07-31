@@ -32,4 +32,6 @@ const ThemeSwitcher = React.forwardRef(() => {
   );
 });
 
+ThemeSwitcher.displayName = "ThemeSwitcher";
+
 export { ThemeSwitcher };
