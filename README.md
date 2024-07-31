@@ -26,10 +26,12 @@ AUTH_SECRET=
 # Migrate Database
 pnpm dlx prisma migrate dev
 # Run
-pnpm dev
+pnpm dev --experimental-https
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+> Note: The app depends on ssl (ie, https). So when running it on production use a proxy ssl server (example, nginx).
 
 ## Screenshots
 
