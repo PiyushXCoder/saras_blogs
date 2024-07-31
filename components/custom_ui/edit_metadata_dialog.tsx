@@ -39,7 +39,7 @@ const EditMetadataDialog = React.forwardRef<
         }
       },
     );
-  }, [setTitle, setSummary]);
+  }, [setTitle, setSummary, blogId]);
 
   const createPost = (formData: FormData) => {
     formData.append("id", blogId);
