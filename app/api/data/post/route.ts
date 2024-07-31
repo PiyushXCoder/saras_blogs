@@ -98,7 +98,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal Error" }, { status: 500 });
 
   const session = await auth();
-  console.log("=>>>>", session?.user);
 
   await prisma.author.upsert({
     where: {
