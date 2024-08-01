@@ -77,18 +77,18 @@ function Posts() {
       .then((res) => res.json())
       .then((data) => {
         setPosts(data);
-        setSkip(skip + pageLength);
         if (data.length < pageLength) setHasMorePosts(false);
       });
-  }, [setPosts, skip]);
+  }, [skip]);
 
   useEffect(() => {
-    let elements: React.ReactNode[] = [];
+    let elements: React.ReactNode[] = postsElements?.slice() || [];
     posts.forEach((post, i) => {
-      elements.push(<Post key={i} post={post} />);
+      elements.push(<Post key={skip + i} post={post} />);
     });
     setPostsElements(elements);
-  }, [posts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [posts, skip]);
 
   // TODO: Scroll event to load more
   // TODO: Search box

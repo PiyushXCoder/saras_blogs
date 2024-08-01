@@ -35,7 +35,7 @@ export default function Home({
         setMarkdown(data);
       } else setIsVisible(false);
     });
-  }, [setIsVisible]);
+  }, [blog, session.data?.user?.email]);
 
   if (!isVisible) {
     return <div>Some issue!</div>;
@@ -44,7 +44,7 @@ export default function Home({
   const saveAsUnpublished = () => {
     fetch(
       "/api/data/post?" +
-        new URLSearchParams({ id: blog, is_published: "false" }),
+      new URLSearchParams({ id: blog, is_published: "false" }),
       {
         method: "PUT",
         body: markdown,
@@ -63,7 +63,7 @@ export default function Home({
   const saveAsPublished = () => {
     fetch(
       "/api/data/post?" +
-        new URLSearchParams({ id: blog, is_published: "true" }),
+      new URLSearchParams({ id: blog, is_published: "true" }),
       {
         method: "PUT",
         body: markdown,
@@ -84,7 +84,7 @@ export default function Home({
 
     fetch(
       "/api/data/post?" +
-        new URLSearchParams({ id: blog, is_published: "true" }),
+      new URLSearchParams({ id: blog, is_published: "true" }),
       {
         method: "DELETE",
       },
