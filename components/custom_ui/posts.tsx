@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DateTime } from "luxon";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { useSession } from "@/auth";
 
@@ -53,7 +53,7 @@ function Post({
   );
 }
 
-function EndOfLoaded({ more }: { more: boolean }) {
+function EndOfLoaded({ more }: { more: Boolean }) {
   return (
     <div>
       {more ? (
@@ -66,32 +66,74 @@ function EndOfLoaded({ more }: { more: boolean }) {
 }
 
 function Posts() {
-  const pageLength = 20;
+  const pageLength = 10;
   const [skip, setSkip] = useState(0);
-  const [hasMorePosts, setHasMorePosts] = useState(true);
-  const [posts, setPosts] = useState<PostData[]>([]);
-  const [postsElements, setPostsElements] = useState<React.ReactNode[]>();
+  const [query, setQuery] = useState("");
+  const [hasMorePosts, setHasMorePosts] = useState<Boolean>(true);
+  const [postsElements, setPostsElements] = useState<React.ReactNode[]>([]);
+  const targetRef = useRef(null);
 
   useEffect(() => {
-    fetch("/api/data/post?skip=" + skip + "&page_length=" + pageLength)
+    fetch(
+      "/api/data/post?" +
+        new URLSearchParams({
+          skip: skip.toString(),
+          page_length: pageLength.toString(),
+          query: query,
+        }).toString(),
+    )
       .then((res) => res.json())
-      .then((data) => {
-        setPosts(data);
+      .then((data: PostData[]) => {
+        let elements: React.ReactNode[] = postsElements?.slice() || [];
+        data.forEach((post, i) => {
+          elements.push(<Post key={skip + i} post={post} />);
+        });
+        setPostsElements(elements);
+
         if (data.length < pageLength) setHasMorePosts(false);
+        else {
+          setHasMorePosts(true);
+        }
       });
-  }, [skip]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [skip, query]);
 
   useEffect(() => {
-    let elements: React.ReactNode[] = postsElements?.slice() || [];
-    posts.forEach((post, i) => {
-      elements.push(<Post key={skip + i} post={post} />);
-    });
-    setPostsElements(elements);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [posts, skip]);
+    const current = targetRef.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasMorePosts && postsElements?.length != 0)
+          setSkip(skip + pageLength);
+      },
+      {
+        root: null, // viewport
+        rootMargin: "0px", // no margin
+        threshold: 0.5, // 50% of target visible
+      },
+    );
 
-  // TODO: Scroll event to load more
-  // TODO: Search box
+    if (current) {
+      observer.observe(current);
+    }
+
+    // Clean up the observer
+    return () => {
+      if (current) {
+        observer.unobserve(current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postsElements]);
+
+  const doSearch = (e: React.FormEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const value = (e?.target as HTMLInputElement)?.value;
+
+    setSkip(0);
+    setHasMorePosts(false);
+    setPostsElements([]);
+    setQuery(value);
+  };
 
   return (
     <div className="w-full">
@@ -99,11 +141,14 @@ function Posts() {
         type="search"
         className="mx-2 my-10 w-[calc(100%_-_1rem)]"
         placeholder="&#x1f50e;  Search"
+        onChange={doSearch}
       />
 
       {postsElements}
 
-      <EndOfLoaded more={hasMorePosts} />
+      <div ref={targetRef}>
+        <EndOfLoaded more={hasMorePosts} />
+      </div>
     </div>
   );
 }

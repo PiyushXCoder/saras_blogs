@@ -7,7 +7,7 @@ import path from "path";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
-  const search = searchParams.get("search");
+  const query = searchParams.get("query");
   const skip = Number.parseInt(searchParams.get("skip") || "0");
   const pageLength = Number.parseInt(searchParams.get("page_length") || "20");
 
@@ -43,12 +43,13 @@ export async function GET(request: Request) {
     let is_published = true;
     if (session) is_published = false;
 
+    console.log(query);
     const data = await prisma.post.findMany({
       skip,
       take: pageLength,
       where: {
         title: {
-          contains: search || "",
+          contains: query || "",
         },
         OR: [
           {

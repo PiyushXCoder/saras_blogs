@@ -39,8 +39,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## TODO
 
-- [ ] Add searching feature
-- [ ] Show more posts on scrolling
+- [x] Add searching feature
+- [x] Show more posts on scrolling
 - [ ] Page wise title and description
 - [ ] SEO related meta tags
 - [ ] Robots.txt
