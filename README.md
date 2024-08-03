@@ -7,6 +7,7 @@ To run the development server:
 create `.env` file
 
 ```
+BASE_URL=https://localhost:3000
 POSTS_DIR=./posts
 DATABASE_URL=mysql://root:secret@localhost:3306/saras
 
