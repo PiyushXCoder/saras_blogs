@@ -7,21 +7,18 @@ import "./globals.css";
 import { NavBar } from "@/components/custom_ui/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
-import { signIn, signOut, auth } from "@/auth";
+import { signIn, auth } from "@/auth";
 import Image from "next/image";
 import { CreatePostDialog } from "@/components/custom_ui/create_post_dialog";
 import { Label } from "@radix-ui/react-label";
 import { LogoutButton } from "@/components/custom_ui/logout_button";
 import { SessionProvider } from "next-auth/react";
+import { genMetadata } from "@/helpers/metadata";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("common");
-  return {
-    title: t("title"),
-    description: t("description"),
-  };
+  return await genMetadata();
 }
 
 export default async function RootLayout({
