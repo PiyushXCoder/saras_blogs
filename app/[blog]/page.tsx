@@ -53,7 +53,7 @@ export default async function Blog({
           <div className="font-mono text-sm">
             {post.author.name} <br /> {post.author.email}
             <br />
-            {"Published " + relative_published + " ago"}
+            {"Published " + relative_published}
           </div>
         </div>
       </div>
