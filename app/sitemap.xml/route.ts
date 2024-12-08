@@ -26,9 +26,8 @@ export async function GET(request: Request) {
       post.id +
       "</loc>" +
       "<lastmod>" +
-      post.published_at.toISOString() +
+      post.published_at.getDate() + "-" + post.published_at.getMonth() + "-" + post.published_at.getFullYear() +
       "</lastmod>" +
-      "<changefreq>weekly</changefreq>" +
       "</url>";
   });
 
