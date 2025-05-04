@@ -30,7 +30,9 @@ const CreatePostDialog = React.forwardRef<
       .then(async (data) => {
         if (data.status == 200) {
           setIsOpen(false);
-          router.replace("/edit/" + formData.get("id"));
+          data.json().then((res) => {
+            router.replace("/edit/" + res.slug);
+          });
         } else alert(await data.text());
       })
       .catch((error) => console.log(error));
@@ -55,7 +57,7 @@ const CreatePostDialog = React.forwardRef<
             <Label htmlFor="name" className="text-right">
               Slug
             </Label>
-            <Input name="id" className="col-span-3" />
+            <Input name="slug" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">

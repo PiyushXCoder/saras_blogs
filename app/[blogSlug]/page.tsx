@@ -7,30 +7,30 @@ import Image from "next/image";
 import { DateTime } from "luxon";
 
 export default async function Blog({
-  params: { blog },
+  params: { blogSlug: blogSlug },
 }: {
-  params: { blog: string };
+  params: { blogSlug: string };
 }) {
   const prisma = new PrismaClient();
   const session = await auth();
 
   const post = await prisma.post.findUnique({
     where: {
-      id: blog,
+      slug: blogSlug || "",
     },
     include: { author: true },
   });
 
   if (
     !post ||
-    (!post.is_published && session?.user?.email != post.author.email)
+    (!post.is_published && session?.user?.email != post.author?.email)
   )
     return <div>Not found</div>;
 
   if (!process.env.POSTS_DIR) return <div>Error</div>;
 
   const data = readFileSync(
-    path.join(process.env.POSTS_DIR, blog + ".mdx"),
+    path.join(process.env.POSTS_DIR, blogSlug + ".mdx"),
   ).toString();
 
   const relative_published = DateTime.fromISO(
@@ -44,14 +44,14 @@ export default async function Blog({
         <div className="w-full flex flex-row items-center gap-3 mb-28">
           {" "}
           <Image
-            src={post.author.image || ""}
+            src={post.author?.image || ""}
             alt=""
             width="60"
             height="60"
             className="rounded-xl max-md:m-3"
           />
           <div className="font-mono text-sm">
-            {post.author.name} <br /> {post.author.email}
+            {post.author?.name} <br /> {post.author?.email}
             <br />
             {"Published " + relative_published}
           </div>

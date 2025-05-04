@@ -12,12 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DateTime } from "luxon";
 import Link from "next/link";
-import { ChangeEventHandler, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { useSession } from "@/auth";
 
 interface PostData {
-  id: string;
+  slug: string;
   title: string;
   author: { email: string; name: string };
   published_at: string;
@@ -25,7 +25,7 @@ interface PostData {
 }
 
 function Post({
-  post: { id, title, author, published_at, summary },
+  post: { slug, title, author, published_at, summary },
 }: {
   post: PostData;
 }) {
@@ -35,7 +35,7 @@ function Post({
     <Card className="mx-2 my-5">
       <CardHeader>
         <CardTitle>
-          <Link href={"/" + id}>{title}</Link>
+          <Link href={"/" + slug}>{title}</Link>
         </CardTitle>
         <CardDescription>
           {author.name + " — " + relative_published}
@@ -44,7 +44,7 @@ function Post({
       <CardContent>{summary}</CardContent>
       <CardFooter>
         {session.data?.user?.email == author.email && (
-          <Link href={"/edit/" + id}>
+          <Link href={"/edit/" + slug}>
             <Button>Edit</Button>
           </Link>
         )}

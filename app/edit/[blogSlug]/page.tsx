@@ -12,9 +12,9 @@ const MarkdownEditor = dynamic(() => import("@uiw/react-markdown-editor"), {
 });
 
 export default function Home({
-  params: { blog },
+  params: { blogSlug },
 }: {
-  params: { blog: string };
+  params: { blogSlug: string };
 }) {
   const [markdown, setMarkdown] = useState<string>("");
   const [isVisible, setIsVisible] = useState(true);
@@ -23,7 +23,7 @@ export default function Home({
 
   useEffect(() => {
     fetch(
-      "/api/data/post?" + new URLSearchParams({ id: blog, body: "true" }),
+      "/api/data/post?" + new URLSearchParams({ slug: blogSlug, body: "true" }),
     ).then(async (res) => {
       if (res.status == 200) {
         const { data, author }: { data: string; author: { email: string } } =
@@ -35,7 +35,7 @@ export default function Home({
         setMarkdown(data);
       } else setIsVisible(false);
     });
-  }, [blog, session.data?.user?.email]);
+  }, [blogSlug, session.data?.user?.email]);
 
   if (!isVisible) {
     return <div>Some issue!</div>;
@@ -44,7 +44,7 @@ export default function Home({
   const saveAsUnpublished = () => {
     fetch(
       "/api/data/post?" +
-      new URLSearchParams({ id: blog, is_published: "false" }),
+        new URLSearchParams({ slug: blogSlug, is_published: "false" }),
       {
         method: "PUT",
         body: markdown,
@@ -63,7 +63,7 @@ export default function Home({
   const saveAsPublished = () => {
     fetch(
       "/api/data/post?" +
-      new URLSearchParams({ id: blog, is_published: "true" }),
+        new URLSearchParams({ slug: blogSlug, is_published: "true" }),
       {
         method: "PUT",
         body: markdown,
@@ -84,7 +84,7 @@ export default function Home({
 
     fetch(
       "/api/data/post?" +
-      new URLSearchParams({ id: blog, is_published: "true" }),
+        new URLSearchParams({ slug: blogSlug, is_published: "true" }),
       {
         method: "DELETE",
       },
@@ -106,7 +106,7 @@ export default function Home({
         <div className="flex flex-row overflow-scroll gap-2 my-4">
           <Button onClick={saveAsUnpublished}>Save as Unpublished</Button>
           <Button onClick={saveAsPublished}>Publish</Button>
-          <EditMetadataDialog blogId={blog}>
+          <EditMetadataDialog blogSlug={blogSlug}>
             <Button>Edit Metadata</Button>
           </EditMetadataDialog>
           <Button onClick={Delete}>Delete</Button>

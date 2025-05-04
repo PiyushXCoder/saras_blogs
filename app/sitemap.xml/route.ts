@@ -23,10 +23,14 @@ export async function GET(request: Request) {
       "<loc>" +
       process.env.BASE_URL +
       "/" +
-      post.id +
+      post.slug +
       "</loc>" +
       "<lastmod>" +
-      post.published_at.getDate() + "-" + post.published_at.getMonth() + "-" + post.published_at.getFullYear() +
+      post.published_at.getDate() +
+      "-" +
+      post.published_at.getMonth() +
+      "-" +
+      post.published_at.getFullYear() +
       "</lastmod>" +
       "</url>";
   });

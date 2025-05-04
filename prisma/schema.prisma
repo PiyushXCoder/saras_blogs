@@ -15,6 +15,7 @@ datasource db {
 
 model Post {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug         String   @unique
   title        String
   summary      String
   is_published Boolean
@@ -26,7 +27,7 @@ model Post {
 model Author {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   name  String
-  email String
+  email String @unique
   image String
   Post  Post[]
 }

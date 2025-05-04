@@ -2,15 +2,15 @@ import { genMetadata } from "@/helpers/metadata";
 import { Metadata } from "next";
 
 export async function generateMetadata({
-  params: { blog },
+  params: { blogSlug: blogSlug },
 }: {
-  params: { blog: string };
+  params: { blogSlug: string };
 }): Promise<Metadata> {
   try {
     const res = await fetch(
       process.env.BASE_URL +
         "/api/data/post?" +
-        new URLSearchParams({ id: blog }),
+        new URLSearchParams({ slug: blogSlug }),
     );
     if (res.status == 200) {
       const data: { title: string; summary: string | null } = await res.json();

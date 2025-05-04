@@ -17,19 +17,19 @@ import { DialogTriggerProps } from "@radix-ui/react-dialog";
 import { Textarea } from "../ui/textarea";
 
 interface DialogTriggerPropsExt extends DialogTriggerProps {
-  blogId: string;
+  blogSlug: string;
 }
 
 const EditMetadataDialog = React.forwardRef<
   HTMLButtonElement,
   DialogTriggerPropsExt
->(({ blogId, children }, _) => {
+>(({ blogSlug, children }, _) => {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
 
   useEffect(() => {
-    fetch("/api/data/post?" + new URLSearchParams({ id: blogId })).then(
+    fetch("/api/data/post?" + new URLSearchParams({ slug: blogSlug })).then(
       async (res) => {
         if (res.status == 200) {
           const data: { title: string; summary: string | null } =
@@ -39,10 +39,10 @@ const EditMetadataDialog = React.forwardRef<
         }
       },
     );
-  }, [setTitle, setSummary, blogId]);
+  }, [setTitle, setSummary, blogSlug]);
 
   const createPost = (formData: FormData) => {
-    formData.append("id", blogId);
+    formData.append("slug", blogSlug);
 
     fetch("/api/data/post?" + new URLSearchParams(formData as any), {
       method: "PUT",
