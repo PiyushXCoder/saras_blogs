@@ -9,22 +9,22 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Post {
-  id           String   @id @unique
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   title        String
-  summary      String   @db.VarChar(500)
-  author       Author   @relation(fields: [author_id], references: [id])
+  summary      String
   is_published Boolean
   published_at DateTime
-  author_id    String
+  author_id    String?  @db.ObjectId
+  author       Author?  @relation(fields: [author_id], references: [id])
 }
 
 model Author {
-  id    String @id @unique
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
   name  String
   email String
   image String
