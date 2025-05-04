@@ -17,7 +17,7 @@ export default function Home({
   params: { blog: string };
 }) {
   const [markdown, setMarkdown] = useState<string>("");
-  const [isVisible, setIsVisible] = useState(true);
+  const [isPostLoaded, setIsPostLoaded] = useState(true);
   const session = useSession();
   const router = useRouter();
 
@@ -29,15 +29,15 @@ export default function Home({
         const { data, author }: { data: string; author: { email: string } } =
           await res.json();
         if (session.data?.user?.email != author.email) {
-          setIsVisible(false);
+          setIsPostLoaded(false);
           return;
         }
         setMarkdown(data);
-      } else setIsVisible(false);
+      } else setIsPostLoaded(false);
     });
   }, [blog, session.data?.user?.email]);
 
-  if (!isVisible) {
+  if (!isPostLoaded) {
     return <div>Some issue!</div>;
   }
 
