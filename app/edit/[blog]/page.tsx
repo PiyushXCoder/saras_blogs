@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useSession } from "@/auth";
 import { EditMetadataDialog } from "@/components/custom_ui/edit_metadata_dialog";
+import { GeneratePostContentDialog } from "@/components/custom_ui/generate_post_content_dialog";
 import { useRouter } from "next/navigation";
 
 const MarkdownEditor = dynamic(() => import("@uiw/react-markdown-editor"), {
@@ -109,6 +110,9 @@ export default function Home({
           <EditMetadataDialog blogId={blog}>
             <Button>Edit Metadata</Button>
           </EditMetadataDialog>
+          <GeneratePostContentDialog setMardown={setMarkdown}>
+            <Button>Generate Post Content</Button>
+          </GeneratePostContentDialog>
           <Button onClick={Delete}>Delete</Button>
         </div>
         <MarkdownEditor
