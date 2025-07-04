@@ -1,5 +1,4 @@
-This is a simplistic blog hosting nextjs app for self hosted server. You can write blogs in markdown and upload.
-
+A robust blogging website with AI based blog generation
 ## Getting Started
 
 To run the development server:
@@ -36,4 +35,4 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Screenshots
 
-![Screenshots](./screenshots/merged.jpg)
+![Screenshots](./screenshots/merged.png)
