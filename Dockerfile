@@ -7,4 +7,4 @@ WORKDIR /app
 
 RUN pnpm install && pnpm add sharp && pnpm build
 
-ENTRYPOINT ["/bin/sh", "-c" , "pnpm dlx prisma migrate deploy && pnpm start" ]
+ENTRYPOINT ["/bin/sh", "-c" , "pnpm dlx prisma generate && pnpm start" ]
