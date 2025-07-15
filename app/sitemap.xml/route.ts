@@ -1,8 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
-  console.log(process.env.DATABASE_URL, process.env.BASE_URL);
+export async function GET(_request: Request) {
   if (
     typeof process.env.DATABASE_URL == "undefined" ||
     typeof process.env.BASE_URL == "undefined"
@@ -11,7 +10,12 @@ export async function GET(request: Request) {
 
   const prisma = new PrismaClient();
 
-  const posts = await prisma.post.findMany();
+  let posts = [];
+  try {
+    posts = await prisma.post.findMany();
+  } catch (error) {
+    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+  }
 
   let xml =
     '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -26,7 +30,11 @@ export async function GET(request: Request) {
       post.id +
       "</loc>" +
       "<lastmod>" +
-      post.published_at.getDate() + "-" + post.published_at.getMonth() + "-" + post.published_at.getFullYear() +
+      post.published_at.getDate() +
+      "-" +
+      post.published_at.getMonth() +
+      "-" +
+      post.published_at.getFullYear() +
       "</lastmod>" +
       "</url>";
   });
