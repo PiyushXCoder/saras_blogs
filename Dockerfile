@@ -5,6 +5,6 @@ RUN npm install -g pnpm
 COPY . /app
 WORKDIR /app
 
-RUN pnpm install && pnpm add sharp && pnpm build
+RUN pnpm install && pnpm add sharp && pnpm dlx prisma generate && pnpm build
 
-ENTRYPOINT ["/bin/sh", "-c" , "pnpm dlx prisma generate && pnpm start" ]
+ENTRYPOINT ["/bin/sh", "-c" , "pnpm start" ]
