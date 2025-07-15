@@ -15,6 +15,7 @@ const nextConfig = {
   env: {
     LOGIN_EMAIL: "piyushxcoder@gmail.com",
   },
+  output: "standalone",
 };
 
 export default withNextIntl(nextConfig);
