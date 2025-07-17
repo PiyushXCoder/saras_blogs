@@ -1,8 +1,7 @@
-FROM node:20.11.1-alpine3.19 AS base
+FROM node:latest AS base
 
 FROM base AS deps
 RUN npm install -g pnpm
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --frozen-lockfile
